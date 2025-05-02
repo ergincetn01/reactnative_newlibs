@@ -8,6 +8,7 @@ import Home from '../screens/Home';
 import ImagePicker from '../screens/ImagePicker';
 import DraggableList from '../screens/DraggableList';
 import ToastMessages from '../screens/Toast';
+import ClipboardActions from '../screens/Clipboard';
 
 const Stack = createNativeStackNavigator<MainStackType>();
 const StackNavigator = () => {
@@ -21,6 +22,7 @@ const StackNavigator = () => {
       <Stack.Screen name="FilePicker" component={FilePicker} />
       <Stack.Screen name="ImagePicker" component={ImagePicker} />
       <Stack.Screen name="Toast" component={ToastMessages} />
+      <Stack.Screen name="Clipboard" component={ClipboardActions} />
     </Stack.Navigator>
   );
 };

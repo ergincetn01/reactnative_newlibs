@@ -8,6 +8,7 @@ export type MainStackType = {
   ImagePicker: undefined;
   DraggableList: undefined;
   Toast: undefined;
+  Clipboard: undefined;
 };
 
 export type IMainStackScreens<T extends keyof MainStackType> =
