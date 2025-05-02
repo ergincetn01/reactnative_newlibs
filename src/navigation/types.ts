@@ -9,6 +9,7 @@ export type MainStackType = {
   DraggableList: undefined;
   Toast: undefined;
   Clipboard: undefined;
+  Calendar: undefined;
 };
 
 export type IMainStackScreens<T extends keyof MainStackType> =

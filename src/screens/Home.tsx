@@ -27,6 +27,9 @@ const NavigationData: NavData[] = [
   {
     name: 'Clipboard',
   },
+  {
+    name: 'Calendar',
+  },
 ];
 
 type Props = IMainStackScreens<'Home'>;
