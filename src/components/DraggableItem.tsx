@@ -1,7 +1,7 @@
 // DraggableListItem.tsx
 import React from 'react';
 import {Pressable, Text} from 'react-native';
-import SwipeItem from '../components/SwipeItem';
+import SwipeItem from './SwipeItem';
 
 type Item = {
   title: string;
