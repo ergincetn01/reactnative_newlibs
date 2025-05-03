@@ -1,9 +1,16 @@
-import {Text} from 'react-native';
+import {Pressable, ScrollView, Text, TextInput, View} from 'react-native';
 import React, {useState} from 'react';
 import {Calendar, DateData} from 'react-native-calendars';
 import {LocaleConfig} from 'react-native-calendars';
 import 'moment/locale/tr';
 
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
+
+type EventType = {
+  title: string;
+  date: string;
+};
 LocaleConfig.locales['tr'] = {
   monthNames: [
     'Ocak',
@@ -49,9 +56,49 @@ LocaleConfig.locales['tr'] = {
 LocaleConfig.defaultLocale = 'tr';
 
 const CalendarView = () => {
-  const [date_, setDate] = useState<string>();
+  const [title, setTitle] = useState<string>('');
+
+  const [date_, setDate] = useState<string>(new Date().toString());
+
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const showDatePicker = () => {
+    setPickerOpen(true);
+  };
+
+  const hideDatePicker = () => {
+    setPickerOpen(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    setDate(date.toString());
+    hideDatePicker();
+  };
+
+  const [events, setEvents] = useState<EventType[]>([]);
+
+  const handleAddEvent = () => {
+    const newEvent: EventType = {
+      date: date_ ? new Date(date_).toString() : '',
+      title: title,
+    };
+    if (title.length > 0) {
+      setEvents(prev => [...prev, newEvent]);
+      setTimeout(() => setTitle(''), 500);
+    }
+  };
+
+  const deleteEvent = (evt: EventType) => {
+    const filteredEvents: EventType[] = events.filter(e => e !== evt);
+    setEvents(filteredEvents);
+  };
+
   return (
-    <>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{paddingBottom: 20}}
+      showsVerticalScrollIndicator={false}
+      style={{flex: 1, paddingHorizontal: 12, backgroundColor: '#fff'}}>
       <Calendar
         theme={{
           backgroundColor: '#690d0d',
@@ -93,8 +140,81 @@ const CalendarView = () => {
           setDate(date.dateString);
         }}
       />
-      <Text>{date_?.toString()} </Text>
-    </>
+      <View style={{flex: 1, alignItems: 'center', paddingTop: 20, rowGap: 15}}>
+        <Text style={{alignSelf: 'flex-start'}}>Etkinlik Ekle</Text>
+        <View
+          style={{
+            width: '100%',
+            borderWidth: 1,
+            borderRadius: 9,
+            paddingHorizontal: 10,
+            justifyContent: 'flex-start',
+          }}>
+          <TextInput
+            style={{width: '100%'}}
+            value={title}
+            onChangeText={text => setTitle(text)}
+          />
+        </View>
+        <Text
+          style={{
+            width: '100%',
+            borderRadius: 9,
+            borderWidth: 1,
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+          }}>
+          Seleced Date: {moment(date_).format('DD/MM/YYYY')}
+        </Text>
+
+        <Pressable
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 12,
+            backgroundColor: 'lightgray',
+            alignItems: 'center',
+          }}
+          onPress={handleAddEvent}>
+          <Text>Etlinlk Ekle</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 12,
+            backgroundColor: 'lightgray',
+            alignItems: 'center',
+          }}
+          onPress={() => setEvents([])}>
+          <Text>Hepsini Sil</Text>
+        </Pressable>
+      </View>
+      {events.length > 0 ? (
+        <View style={{flex: 1, width: '100%'}}>
+          {events.map(e => (
+            <Pressable
+              onPress={() => deleteEvent(e)}
+              style={{
+                borderWidth: 0.4,
+                width: '100%',
+                paddingHorizontal: 12,
+                paddingVertical: 5,
+              }}>
+              <Text>{e.title} </Text>
+              <Text>{moment(e.date).format('DD/MM/YYYY')} </Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : (
+        <></>
+      )}
+
+      <DateTimePickerModal
+        isVisible={pickerOpen}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
+    </ScrollView>
   );
 };
 
