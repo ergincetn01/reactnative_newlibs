@@ -3,6 +3,7 @@ import {
   BaseToast,
   BaseToastProps,
   ErrorToast,
+  InfoToast,
 } from 'react-native-toast-message';
 
 export const toastConfig = {
@@ -32,6 +33,23 @@ export const toastConfig = {
       }}
     />
   ),
+  info: (props: BaseToastProps) => (
+    <InfoToast
+      {...props}
+      style={{
+        paddingVertical: 0,
+        height: 40,
+        borderLeftColor: 'lightgray',
+        alignItems: 'center',
+        backgroundColor: 'lightgray',
+        justifyContent: 'center',
+      }}
+      text1Style={{
+        textAlign: 'center',
+        fontSize: 14,
+      }}
+    />
+  ),
 
   //other possible custom named toasts'names can be used as type prop
   customToast: ({props}: {props: BaseToastProps}) => (
@@ -39,10 +57,10 @@ export const toastConfig = {
       style={{
         height: 60,
         marginHorizontal: 6,
-        width: '100%',
+        width: '90%',
         backgroundColor: 'purple',
       }}>
-      <Text style={{color: '#fff'}}>{props.text1}</Text>
+      <Text style={props.text1Style}>{props.text1}</Text>
     </View>
   ),
 };
