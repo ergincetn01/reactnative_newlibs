@@ -5,6 +5,7 @@ import {IMainStackScreens, MainStackType} from '../navigation/types';
 type NavData = {
   name: keyof MainStackType;
 };
+
 const NavigationData: NavData[] = [
   {
     name: 'FilePicker',
@@ -29,6 +30,9 @@ const NavigationData: NavData[] = [
   },
   {
     name: 'Calendar',
+  },
+  {
+    name: 'Skeleton',
   },
 ];
 

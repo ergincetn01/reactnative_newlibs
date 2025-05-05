@@ -10,6 +10,7 @@ export type MainStackType = {
   Toast: undefined;
   Clipboard: undefined;
   Calendar: undefined;
+  Skeleton: undefined;
 };
 
 export type IMainStackScreens<T extends keyof MainStackType> =
