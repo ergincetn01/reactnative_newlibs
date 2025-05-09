@@ -5,6 +5,9 @@ import StackNavigator from './src/navigation/StackNavigator';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import {toastConfig} from './src/helpers/toastConfig';
+if (__DEV__) {
+  require('./ReactotronConfig');
+}
 
 const App = () => {
   return (
