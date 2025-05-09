@@ -11,6 +11,7 @@ import ToastMessages from '../screens/Toast';
 import ClipboardActions from '../screens/Clipboard';
 import CalendarView from '../screens/CalendarView';
 import Skeleton from '../screens/Skeleton';
+import ScannerScreen from '../screens/ScannerScreen';
 
 const Stack = createNativeStackNavigator<MainStackType>();
 const StackNavigator = () => {
@@ -27,6 +28,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Clipboard" component={ClipboardActions} />
       <Stack.Screen name="Calendar" component={CalendarView} />
       <Stack.Screen name="Skeleton" component={Skeleton} />
+      <Stack.Screen name="QRScanner" component={ScannerScreen} />
     </Stack.Navigator>
   );
 };

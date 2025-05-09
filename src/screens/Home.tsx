@@ -34,6 +34,9 @@ const NavigationData: NavData[] = [
   {
     name: 'Skeleton',
   },
+  {
+    name: 'QRScanner',
+  },
 ];
 
 type Props = IMainStackScreens<'Home'>;
