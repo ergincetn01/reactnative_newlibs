@@ -1,11 +1,20 @@
-import {Pressable, ScrollView, Text, TextInput, View} from 'react-native';
-import React, {useState} from 'react';
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Calendar, DateData} from 'react-native-calendars';
 import {LocaleConfig} from 'react-native-calendars';
 import 'moment/locale/tr';
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import {MarkedDates} from 'react-native-calendars/src/types';
+import {frequency} from '../helpers/calendarHelpers';
 
 type EventType = {
   title: string;
@@ -56,9 +65,62 @@ LocaleConfig.locales['tr'] = {
 LocaleConfig.defaultLocale = 'tr';
 
 const CalendarView = () => {
+  const [events, setEvents] = useState<EventType[]>([]);
+
   const [title, setTitle] = useState<string>('');
 
   const [date_, setDate] = useState<string>(new Date().toString());
+
+  const eventDatesYMD = events.map(e => moment(e.date).format('YYYY-MM-DD'));
+  const [markedDates, setMarkedDates] = useState<MarkedDates>({});
+
+  const isToday = (d: string) => {
+    return moment(new Date()).format('YYYY-MM-DD') === d;
+  };
+
+  useEffect(() => {
+    updateMarkedDates();
+  }, [eventDatesYMD.length, date_]);
+
+  const isSelectedDate = (d: string): boolean => {
+    return date_ === d;
+  };
+
+  const updateMarkedDates = useCallback(() => {
+    const newMarked: MarkedDates = {};
+
+    eventDatesYMD.forEach(e => {
+      const count = frequency(eventDatesYMD, e);
+      newMarked[e] = {
+        dotColor: isToday(e) ? '#fff' : 'black',
+        marked: true,
+        type: count > 1 ? 'multi-dot' : 'dot',
+        selected: isSelectedDate(e),
+        selectedColor: isSelectedDate(e)
+          ? isToday(e)
+            ? 'red'
+            : 'purple'
+          : undefined,
+      };
+    });
+
+    const selectedDateYMD = moment(date_).format('YYYY-MM-DD');
+    if (!newMarked[selectedDateYMD]) {
+      //date is selected and has no events
+      newMarked[selectedDateYMD] = {
+        selected: true,
+        selectedColor: isToday(selectedDateYMD) ? 'blue' : 'lightblue',
+      };
+    } else {
+      //date is selected and has event
+      newMarked[selectedDateYMD].selected = true;
+      newMarked[selectedDateYMD].selectedColor = isToday(selectedDateYMD)
+        ? 'blue'
+        : 'pink';
+    }
+
+    setMarkedDates(newMarked);
+  }, [eventDatesYMD, date_]);
 
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -75,8 +137,6 @@ const CalendarView = () => {
     hideDatePicker();
   };
 
-  const [events, setEvents] = useState<EventType[]>([]);
-
   const handleAddEvent = () => {
     const newEvent: EventType = {
       date: date_ ? new Date(date_).toString() : '',
@@ -84,6 +144,7 @@ const CalendarView = () => {
     };
     if (title.length > 0) {
       setEvents(prev => [...prev, newEvent]);
+      Keyboard.dismiss();
       setTimeout(() => setTitle(''), 500);
     }
   };
@@ -98,8 +159,27 @@ const CalendarView = () => {
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={{paddingBottom: 20}}
       showsVerticalScrollIndicator={false}
-      style={{flex: 1, paddingHorizontal: 12, backgroundColor: '#fff'}}>
+      style={{
+        flex: 1,
+        paddingHorizontal: 12,
+        paddingTop: 12,
+        backgroundColor: '#fff',
+      }}>
       <Calendar
+        renderArrow={direction => (
+          <Text style={{height: 20, width: 30}}>
+            {direction === 'left' ? '<---' : '--->'}{' '}
+          </Text>
+        )}
+        headerStyle={{
+          borderWidth: 0.7,
+          borderColor: 'rgb(127,127,127)',
+
+          justifyContent: 'center',
+          paddingHorizontal: 4,
+          paddingVertical: 4,
+          borderRadius: 12,
+        }}
         theme={{
           backgroundColor: '#690d0d',
           calendarBackground: '#ffffff',
@@ -108,15 +188,15 @@ const CalendarView = () => {
           selectedDayBackgroundColor: '#00adf5',
           selectedDayTextColor: '#ffffff',
           todayTextColor: '#fff',
-          todayBackgroundColor: 'blue',
+          todayBackgroundColor: 'lightgreen',
           dayTextColor: '#2d4150',
           textDisabledColor: '#d9e1e8',
-
           dotColor: '#00adf5',
           selectedDotColor: '#ffffff',
           arrowColor: 'orange',
+
           disabledArrowColor: '#d9e1e8',
-          monthTextColor: 'blue',
+          monthTextColor: 'black',
           indicatorColor: 'blue',
           textDayFontFamily: 'monospace',
           textMonthFontFamily: 'monospace',
@@ -128,13 +208,7 @@ const CalendarView = () => {
           textMonthFontSize: 16,
           textDayHeaderFontSize: 16,
         }}
-        markedDates={{
-          [date_ ?? '']: {
-            selected: true,
-            selectedColor: '#00adf5',
-            selectedTextColor: '#ffffff',
-          },
-        }}
+        markedDates={markedDates}
         enableSwipeMonths
         onDayPress={(date: DateData) => {
           setDate(date.dateString);
@@ -188,10 +262,14 @@ const CalendarView = () => {
           <Text>Hepsini Sil</Text>
         </Pressable>
       </View>
+      {eventDatesYMD.map((e, i) => (
+        <Text key={i}>{e}</Text>
+      ))}
       {events.length > 0 ? (
         <View style={{flex: 1, width: '100%'}}>
-          {events.map(e => (
+          {events.map((e, ix) => (
             <Pressable
+              key={ix}
               onPress={() => deleteEvent(e)}
               style={{
                 borderWidth: 0.4,
