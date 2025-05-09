@@ -8,26 +8,11 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
-import Toast from 'react-native-toast-message';
+import {copyToClipboard} from '../helpers/clipboardHelper';
 
 const ClipboardActions = () => {
   const [text_, setText] = useState<string>('');
   const [copiedText, setCopiedText] = useState<string>('');
-
-  const copyToClipboard = async () => {
-    try {
-      await Clipboard.setString(text_);
-      Toast.show({
-        type: 'info',
-        text1: 'Copied to clipboard!',
-        position: 'bottom',
-        autoHide: true,
-        visibilityTime: 5000,
-      });
-    } catch {
-      console.log('error');
-    }
-  };
 
   const pasteText = async () => {
     try {
@@ -51,7 +36,7 @@ const ClipboardActions = () => {
           onChangeText={(text: string) => setText(text)}
         />
       </View>
-      <Pressable style={styles.button} onPress={copyToClipboard}>
+      <Pressable style={styles.button} onPress={() => copyToClipboard(text_)}>
         <Text>Copy to clipboard</Text>
       </Pressable>
       <Text selectable> Current Text: {text_} </Text>
