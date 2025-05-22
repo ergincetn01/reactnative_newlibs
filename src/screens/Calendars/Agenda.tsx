@@ -80,6 +80,7 @@ const AgendaListView = () => {
   return (
     <View style={styles.container}>
       <AgendaList
+        // renderSectionHeader={({})}
         sections={sections}
         renderItem={({item}) => (
           <TouchableOpacity
