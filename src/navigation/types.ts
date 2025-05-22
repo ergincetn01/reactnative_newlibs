@@ -12,6 +12,7 @@ export type MainStackType = {
   Calendar: undefined;
   Skeleton: undefined;
   QRScanner: undefined;
+  Slidable: undefined;
 };
 
 export type IMainStackScreens<T extends keyof MainStackType> =

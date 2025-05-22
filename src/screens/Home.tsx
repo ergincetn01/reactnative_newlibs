@@ -37,6 +37,7 @@ const NavigationData: NavData[] = [
   {
     name: 'QRScanner',
   },
+  {name: 'Slidable'},
 ];
 
 type Props = IMainStackScreens<'Home'>;
